@@ -9,8 +9,12 @@ import javax.swing.border.EmptyBorder;
 
 import bd.core.MeuResultSet;
 import bd.daos.Alunos;
+import bd.daos.MensagensAlunos;
+import bd.daos.MensagensMonitores;
 import bd.daos.Monitores;
 import bd.dbos.Aluno;
+import bd.dbos.MensagemAluno;
+import bd.dbos.MensagemMonitor;
 import bd.dbos.Monitor;
 
 import javax.swing.DefaultListModel;
@@ -37,6 +41,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -50,8 +55,9 @@ public class ChatUsers extends JFrame {
 	private Aluno aluno;
 	private Monitor monitor;
 	
-	private boolean conectado;
 	private ArrayList<Aluno> listaAlunos;
+	private ArrayList<MensagemMonitor> mensagensMonitor;
+	private ArrayList<MensagemAluno> mensagensAluno;
 
 	/**
 	 * Launch the application.
@@ -192,8 +198,6 @@ public class ChatUsers extends JFrame {
 						
 						monitor.setAtividade("online");
 						Monitores.alterar(monitor);
-						
-						conectado = true;
 					}
 					catch (Exception erro) 
 					{ } // sei que não vai dar erro
@@ -205,8 +209,6 @@ public class ChatUsers extends JFrame {
 						
 						monitor.setAtividade("offline");
 						Monitores.alterar(monitor);
-						
-						conectado = false;
 					}
 					catch (Exception erro) 
 					{ } // sei que não vai dar erro
@@ -223,7 +225,7 @@ public class ChatUsers extends JFrame {
 						String nome = (String)listaUsuarios.getSelectedValue();
 						if (nome != null) {
 							Aluno alunoSelecionado = listaAlunos.get(index);
-							carregarMensagens(null);
+							carregarMensagens(alunoSelecionado);
 						}
 					}
 					
@@ -237,8 +239,62 @@ public class ChatUsers extends JFrame {
 		});
 	}
 	public void carregarMensagens(Aluno alunoSelecionado) {
-		    LocalDateTime date1 = LocalDateTime.now();
-			System.out.println(date1);
+		MeuResultSet msgsAluno = null;
+		MeuResultSet msgsMonitor = null;
+		try {
+			msgsAluno = MensagensAlunos.getMensagensPeloRA(alunoSelecionado.getRA(), monitor.getCodigo());
+			msgsMonitor = MensagensMonitores.getMensagensPeloCodMonitor(monitor.getCodigo(), alunoSelecionado.getRA());
+		}
+		catch(Exception erro) {
+			erro.printStackTrace();
+		}
+		
+		mensagensMonitor = new ArrayList<MensagemMonitor>();
+		mensagensAluno = new ArrayList<MensagemAluno>();
+		
+		try {
+			while (msgsAluno.next()) {
+				mensagensAluno.add(new MensagemAluno(msgsAluno.getInt("CodMensagemAluno"),
+													 msgsAluno.getString("RA"),
+													 msgsAluno.getString("MensagemAluno"),
+													 msgsAluno.getInt("CodMonitor"),
+													 msgsAluno.getString("EnvioAluno"),
+													 msgsAluno.getString("Recebimento")));
+			}
+			
+			while (msgsMonitor.next()) {
+				mensagensMonitor.add(new MensagemMonitor(msgsMonitor.getInt("CodMensagemMonitor"),
+													 msgsMonitor.getInt("CodMonitor"),
+													 msgsMonitor.getString("MensagemMonitor"),
+													 msgsMonitor.getString("RA"),
+													 msgsMonitor.getString("EnvioMonitor"),
+													 msgsMonitor.getString("Recebimento")));
+			}
+		}
+		catch(Exception erro) {
+			erro.printStackTrace();
+		}
+		/*String[] todasMensagens = new String[5];
+		for (MensagemAluno msgAluno : this.mensagensAluno) {
+			for (MensagemMonitor msgMonitor : this.mensagensMonitor) {
+				
+				
+				LocalDateTime dateTime = LocalDateTime.parse(msgAluno.getEnvioAluno());
+				System.out.println(dateTime);
+			}
+		}*/
+		
+		String msg = (this.mensagensAluno.get(0)).getEnvioAluno();
+		String ret = "";
+		System.out.println(msg);
+		ret += msg.substring(0, 10);
+		ret += "T";
+		ret += msg.substring(11);
+		System.out.println(ret);
+		LocalDateTime dateTime = LocalDateTime.parse(ret);
+		System.out.println(dateTime);
+		    /*LocalDateTime date1 = LocalDateTime.now();
+			System.out.println(date1);*/
 	}
 	
 	public void setListAlunos(){
@@ -258,13 +314,25 @@ public class ChatUsers extends JFrame {
 	}
 	
 	public String[] getNomesDaLista() {
-		String[] nomes = new String[10];
+		String[] nomes = new String[1];
 		int cont = 0;
 		for (Aluno aluno : this.listaAlunos) {
 			nomes[cont] = aluno.getNome();
+			if (cont == nomes.length) {
+				nomes = (String[])redimensionar(1, nomes);
+			}
 			cont++;
 		}
 		return nomes;
+	}
+	
+	public Object[] redimensionar(int val, Object[] vetAtual) {
+		Object[] vetNovo = new Object[vetAtual.length + val];
+		for (int i = 0; i < vetAtual.length; i++) {
+			vetNovo[i] = vetAtual[i];
+		}
+		vetAtual = vetNovo;
+		return vetAtual;
 	}
 	
 	public void setMonitor(Monitor monitor) throws Exception {

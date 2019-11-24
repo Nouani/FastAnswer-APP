@@ -211,7 +211,7 @@ public class MensagensAlunos
         return resultado;
     }
     
-    public static MeuResultSet getMensagensPeloRA (String ra) throws Exception
+    public static MeuResultSet getMensagensPeloRA (String ra, int codMonitor) throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -221,11 +221,14 @@ public class MensagensAlunos
 
             sql = "SELECT * " +
                   "FROM MensagensAlunos "+
-                  "WHERE RA = ?";
+                  "WHERE RA = ? AND "+
+                  "CodMonitor = ? "+
+                  "order by EnvioAluno";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             
             BDSQLServer.COMANDO.setString (1, ra);
+            BDSQLServer.COMANDO.setInt (2, codMonitor);
 
             resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
         }

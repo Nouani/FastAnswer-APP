@@ -211,21 +211,24 @@ public class MensagensMonitores
         return resultado;
     }
     
-    public static MeuResultSet getMensagensPeloCodMonitor (int codMonitor) throws Exception
+    public static MeuResultSet getMensagensPeloCodMonitor (int codMonitor, String ra) throws Exception
     {
         MeuResultSet resultado = null;
 
         try
         {
             String sql;
-
+            
             sql = "SELECT * " +
-                  "FROM MensagensMonitores "+
-                  "WHERE CodMonitor = ?";
+                   "FROM MensagensMonitores "+
+                   "WHERE CodMonitor = ? AND "+
+                   "RA = ? "+
+                   "order by EnvioMonitor";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             
             BDSQLServer.COMANDO.setInt (1, codMonitor);
+            BDSQLServer.COMANDO.setString (2, ra);
 
             resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
         }
