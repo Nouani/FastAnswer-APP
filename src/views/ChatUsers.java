@@ -44,6 +44,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ChatUsers extends JFrame {
 
@@ -59,7 +61,7 @@ public class ChatUsers extends JFrame {
 	private ArrayList<Aluno> listaAlunos;
 	private ArrayList<MensagemMonitor> mensagensMonitor;
 	private ArrayList<MensagemAluno> mensagensAluno;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -233,6 +235,9 @@ public class ChatUsers extends JFrame {
 							carregarMensagens(alunoSelecionado);
 						}
 					}
+					else {
+						JOptionPane.showMessageDialog(null, "Você precisa estar conectado!");
+					}
 					
 		            
 					/*listaUsuarios.setSelectedIndex(index);
@@ -243,6 +248,7 @@ public class ChatUsers extends JFrame {
 			}
 		});
 	}
+	
 	public void carregarMensagens(Aluno alunoSelecionado) {
 		MeuResultSet msgsAluno = null;
 		MeuResultSet msgsMonitor = null;
@@ -281,7 +287,10 @@ public class ChatUsers extends JFrame {
 		catch(Exception erro) {
 			erro.printStackTrace();
 		}
+		
 		String[] todasMensagens = new String[0];
+		
+		boolean naoRecebidas = false;
 		
 		int contMsgAluno = 0;
 		int contMsgMonitor = 0;
@@ -289,6 +298,7 @@ public class ChatUsers extends JFrame {
 		
 		String nomeMonitor = null;
 		String nomeAluno = null;
+		
 		try {
 			nomeMonitor = (Alunos.getAluno(monitor.getRA())).getNome();
 			nomeAluno = alunoSelecionado.getNome();
@@ -307,6 +317,7 @@ public class ChatUsers extends JFrame {
 			}
 			
 			if (result < 0) { // aluno é o mais antigo
+				mensagensAluno.get(contMsgAluno);
 				todasMensagens[contador] = nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
 				contador++;
 				contMsgAluno++;
@@ -326,10 +337,25 @@ public class ChatUsers extends JFrame {
 				todasMensagens = redimensionar(1, todasMensagens);
 			}
 			
+			String recebimento = mensagensAluno.get(contMsgAluno).getRecebimentoAluno();
+			if (recebimento.equals("N")  && !naoRecebidas) {
+				if (!naoRecebidas) {
+					todasMensagens[contador] = "\nNovas mensagens: ";
+					naoRecebidas = true;
+					contador++;
+				}
+				else
+					marcarRecebidas(mensagensAluno.get(contMsgAluno));
+			}
+			
+			if (contador == todasMensagens.length) {
+				todasMensagens = redimensionar(1, todasMensagens);
+			}
+			
 			todasMensagens[contador] =  nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
 			contador++;
 			contMsgAluno++;
-		} 
+		}
 		while (contMsgMonitor != mensagensMonitor.size()) {
 			if (contador == todasMensagens.length) {
 				todasMensagens = redimensionar(1, todasMensagens);
@@ -340,6 +366,7 @@ public class ChatUsers extends JFrame {
 			contMsgMonitor++;
 		}
 		
+		txtAreaMensagens.setText("");
 		for (int i = 0; i < todasMensagens.length; i++) {
 			System.out.println(todasMensagens[i]);
 			txtAreaMensagens.append(todasMensagens[i] + "\n");
@@ -349,6 +376,15 @@ public class ChatUsers extends JFrame {
 		
 		    /*LocalDateTime date1 = LocalDateTime.now();
 			System.out.println(date1);*/
+	}
+	
+	public void marcarRecebidas(MensagemAluno msgAluno) {
+		try {
+			msgAluno.setRecebimentoAluno("S");
+			MensagensAlunos.alterar(msgAluno);
+		} 
+		catch (Exception e) 
+		{ } // sei que não vai dar erro
 	}
 	
 	public LocalDateTime formatarData(String data) {
