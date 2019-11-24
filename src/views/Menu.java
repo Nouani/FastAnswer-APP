@@ -288,8 +288,6 @@ public class Menu extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				try 
 				{
-					/*monitor.setAtividade("online");
-					Monitores.alterar(monitor);*/
 					ChatUsers chat = new ChatUsers(aluno, monitor);
 					chat.setVisible(true);
 				} catch (Exception erro) 

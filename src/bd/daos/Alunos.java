@@ -1,6 +1,8 @@
 package bd.daos;
 
 import java.sql.*;
+import java.util.ArrayList;
+
 import bd.*;
 import bd.core.*;
 import bd.dbos.*;
@@ -201,6 +203,30 @@ public class Alunos
             throw new Exception ("Erro ao recuperar alunos");
         }
 
+        return resultado;
+    }
+    
+    public static MeuResultSet getAlunosAtividade (String atividade) throws Exception
+    {
+        MeuResultSet resultado = null;
+        try
+        {
+            String sql;
+
+            sql = "SELECT * " +
+                  "FROM ALUNOS "+
+            	  "WHERE ATIVIDADE = ?";
+
+            BDSQLServer.COMANDO.prepareStatement (sql);
+            
+            BDSQLServer.COMANDO.setString (1, atividade);
+
+            resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
+        }
+        catch (SQLException erro)
+        {
+            throw new Exception ("Erro ao recuperar alunos com tal atividade");
+        }
         return resultado;
     }
 }

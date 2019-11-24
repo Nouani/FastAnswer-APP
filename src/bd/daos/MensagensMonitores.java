@@ -7,7 +7,7 @@ import bd.dbos.*;
 
 public class MensagensMonitores
 {
-    public static boolean cadastrado (int codMensagemMonitor) throws Exception
+    public static boolean cadastrado (int codMonitor) throws Exception
     {
         boolean retorno = false;
 
@@ -16,12 +16,12 @@ public class MensagensMonitores
             String sql;
 
             sql = "SELECT * " +
-                  "FROM MENSAGENSALUNOS " +
-                  "WHERE CodMensagemMonitor = ?";
+                  "FROM MENSAGENSMONITORES " +
+                  "WHERE CodMonitor = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
-            BDSQLServer.COMANDO.setInt(1, codMensagemMonitor);
+            BDSQLServer.COMANDO.setInt(1, codMonitor);
 
             MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
 
@@ -64,17 +64,19 @@ public class MensagensMonitores
         {
             String sql;
 
-            sql = "INSERT INTO MensagensAlunos " +
-                  "(CodMensagemMonitor,MensagemMonitor,RA,Recebimento) " +
+            sql = "INSERT INTO MensagensMonitores " +
+                  "(CodMensagemMonitor,CodMonitor,MensagemMonitor,RA,DataEnvio,Recebimento) " +
                   "VALUES " +
-                  "(?,?,?,?)";
+                  "(?,?,?,?,?,?)";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
             BDSQLServer.COMANDO.setInt(1, MensagemMonitor.getCodMensagemMonitor());
-            BDSQLServer.COMANDO.setString(2, MensagemMonitor.getMensagemMonitor());
-            BDSQLServer.COMANDO.setString(3, MensagemMonitor.getRA());
-            BDSQLServer.COMANDO.setString(4, MensagemMonitor.getRecebimentoMonitor());
+            BDSQLServer.COMANDO.setInt(2, MensagemMonitor.getCodMonitorEnviou());
+            BDSQLServer.COMANDO.setString(3, MensagemMonitor.getMensagemMonitor());
+            BDSQLServer.COMANDO.setString(4, MensagemMonitor.getRA());
+            BDSQLServer.COMANDO.setString(5, MensagemMonitor.getEnvioMonitor());
+            BDSQLServer.COMANDO.setString(6, MensagemMonitor.getRecebimentoMonitor());
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -86,21 +88,21 @@ public class MensagensMonitores
         }
     }
 
-    public static void excluir (int codMensagemMonitor) throws Exception
+    public static void excluir (int codMonitor) throws Exception
     {
-        if (!cadastrado (codMensagemMonitor))
+        if (!cadastrado (codMonitor))
             throw new Exception ("Nao cadastrado");
 
         try
         {
             String sql;
 
-            sql = "DELETE FROM MensagensAlunos " +
-                  "WHERE CodMensagemMonitor=?";
+            sql = "DELETE FROM MensagensMonitores " +
+                  "WHERE CodMonitor=?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
-            BDSQLServer.COMANDO.setInt (1, codMensagemMonitor);
+            BDSQLServer.COMANDO.setInt (1, codMonitor);
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -117,25 +119,29 @@ public class MensagensMonitores
         if (mensagemMonitor==null)
             throw new Exception ("Mensagem do monitore não fornecida");
 
-        if (!cadastrado (mensagemMonitor.getCodMensagemMonitor()))
+        if (!cadastrado (mensagemMonitor.getCodMonitorEnviou()))
             throw new Exception ("Nao cadastrado");
 
         try
         {
             String sql;
 
-            sql = "UPDATE MensagensAlunos " +
+            sql = "UPDATE MensagensMonitores " +
+            	  "SET CodMonitor=? " +
                   "SET MensagemMonitor=? " +
                   "SET RA=? " +
+                  "SET EnvioMonitor=? " +
                   "SET Recebimento=? " +
                   "WHERE CodMensagemMonitor = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setString (1, mensagemMonitor.getMensagemMonitor());
-            BDSQLServer.COMANDO.setString  (2, mensagemMonitor.getRA());
-            BDSQLServer.COMANDO.setString (3, mensagemMonitor.getRecebimentoMonitor());
-            BDSQLServer.COMANDO.setInt    (4, mensagemMonitor.getCodMensagemMonitor());
+            
+            BDSQLServer.COMANDO.setInt (1, mensagemMonitor.getCodMonitorEnviou());
+            BDSQLServer.COMANDO.setString(2, mensagemMonitor.getMensagemMonitor());
+            BDSQLServer.COMANDO.setString(3, mensagemMonitor.getRA());
+            BDSQLServer.COMANDO.setString(4, mensagemMonitor.getEnvioMonitor());
+            BDSQLServer.COMANDO.setString(5, mensagemMonitor.getRecebimentoMonitor());
+            BDSQLServer.COMANDO.setInt(6, mensagemMonitor.getCodMensagemMonitor());
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -147,7 +153,7 @@ public class MensagensMonitores
         }
     }
 
-    public static MensagemMonitor getMensagemMonitor (int codMensagemMonitor) throws Exception
+    /*public static MensagemMonitor getMensagemMonitor (int codMensagemMonitor) throws Exception
     {
     	MensagemMonitor mensagemMonitor = null;
 
@@ -179,9 +185,9 @@ public class MensagensMonitores
         }
 
         return mensagemMonitor;
-    }
+    }*/
 
-    public static MeuResultSet getTodasMensagensAlunos () throws Exception
+    public static MeuResultSet getMensagensMonitoresOrdenadas () throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -190,7 +196,8 @@ public class MensagensMonitores
             String sql;
 
             sql = "SELECT * " +
-                  "FROM MensagensMonitores";
+                  "FROM MensagensMonitores "+
+            	  "order by EnvioMonitor";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
@@ -204,7 +211,7 @@ public class MensagensMonitores
         return resultado;
     }
     
-    public static MeuResultSet getMensagensPeloRecebimento (String recebimento) throws Exception
+    public static MeuResultSet getMensagensPeloCodMonitor (int codMonitor) throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -214,11 +221,11 @@ public class MensagensMonitores
 
             sql = "SELECT * " +
                   "FROM MensagensMonitores "+
-                  "WHERE Recebimento = ?";
+                  "WHERE CodMonitor = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             
-            BDSQLServer.COMANDO.setString (1, recebimento);
+            BDSQLServer.COMANDO.setInt (1, codMonitor);
 
             resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
         }

@@ -7,7 +7,7 @@ import bd.dbos.*;
 
 public class MensagensAlunos
 {
-    public static boolean cadastrado (int codMensagemAluno) throws Exception
+    public static boolean cadastrado (String ra) throws Exception
     {
         boolean retorno = false;
 
@@ -17,11 +17,11 @@ public class MensagensAlunos
 
             sql = "SELECT * " +
                   "FROM MENSAGENSALUNOS " +
-                  "WHERE CodMensagemAluno = ?";
+                  "WHERE RA = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
-            BDSQLServer.COMANDO.setInt(1, codMensagemAluno);
+            BDSQLServer.COMANDO.setString(1, ra);
 
             MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
 
@@ -65,16 +65,18 @@ public class MensagensAlunos
             String sql;
 
             sql = "INSERT INTO MensagensAlunos " +
-                  "(CodMensagemAluno,MensagemAluno,CodMonitor,Recebimento) " +
+                  "(CodMensagemAluno,RA,MensagemAluno,CodMonitor,DataEnvio,Recebimento) " +
                   "VALUES " +
-                  "(?,?,?,?)";
+                  "(?,?,?,?,?,?)";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
             BDSQLServer.COMANDO.setInt(1, mensagemAluno.getCodMensagemAluno());
-            BDSQLServer.COMANDO.setString(2, mensagemAluno.getMensagemAluno());
-            BDSQLServer.COMANDO.setInt(3, mensagemAluno.getCodMonitor());
-            BDSQLServer.COMANDO.setString(4, mensagemAluno.getRecebimentoAluno());
+            BDSQLServer.COMANDO.setString(2, mensagemAluno.getRAEnvio());
+            BDSQLServer.COMANDO.setString(3, mensagemAluno.getMensagemAluno());
+            BDSQLServer.COMANDO.setInt(4, mensagemAluno.getCodMonitor());
+            BDSQLServer.COMANDO.setString(5, mensagemAluno.getEnvioAluno());
+            BDSQLServer.COMANDO.setString(6, mensagemAluno.getRecebimentoAluno());
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -86,9 +88,9 @@ public class MensagensAlunos
         }
     }
 
-    public static void excluir (int codMensagemAluno) throws Exception
+    public static void excluir (String ra) throws Exception
     {
-        if (!cadastrado (codMensagemAluno))
+        if (!cadastrado (ra))
             throw new Exception ("Nao cadastrado");
 
         try
@@ -96,11 +98,11 @@ public class MensagensAlunos
             String sql;
 
             sql = "DELETE FROM MensagensAlunos " +
-                  "WHERE CodMensagemAluno=?";
+                  "WHERE RA=?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
-            BDSQLServer.COMANDO.setInt (1, codMensagemAluno);
+            BDSQLServer.COMANDO.setString (1, ra);
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -117,7 +119,7 @@ public class MensagensAlunos
         if (mensagemAluno==null)
             throw new Exception ("Mensagem do aluno não fornecida");
 
-        if (!cadastrado (mensagemAluno.getCodMensagemAluno()))
+        if (!cadastrado (mensagemAluno.getRAEnvio()))
             throw new Exception ("Nao cadastrado");
 
         try
@@ -125,17 +127,21 @@ public class MensagensAlunos
             String sql;
 
             sql = "UPDATE MensagensAlunos " +
+            	  "SET RA=? " +
                   "SET MensagemAluno=? " +
                   "SET CodMonitor=? " +
+                  "SET EnvioAluno=? " +
                   "SET Recebimento=? " +
                   "WHERE CodMensagemAluno = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
             BDSQLServer.COMANDO.setString (1, mensagemAluno.getMensagemAluno());
-            BDSQLServer.COMANDO.setInt  (2, mensagemAluno.getCodMonitor());
-            BDSQLServer.COMANDO.setString (3, mensagemAluno.getRecebimentoAluno());
-            BDSQLServer.COMANDO.setInt    (4, mensagemAluno.getCodMensagemAluno());
+            BDSQLServer.COMANDO.setString (2, mensagemAluno.getRAEnvio());
+            BDSQLServer.COMANDO.setInt  (3, mensagemAluno.getCodMonitor());
+            BDSQLServer.COMANDO.setString (4, mensagemAluno.getEnvioAluno());
+            BDSQLServer.COMANDO.setString (5, mensagemAluno.getRecebimentoAluno());
+            BDSQLServer.COMANDO.setInt    (6, mensagemAluno.getCodMensagemAluno());
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -147,7 +153,7 @@ public class MensagensAlunos
         }
     }
 
-    public static MensagemAluno getMensagemAluno (int codMensagemAluno) throws Exception
+    /*public static MensagemAluno getMensagemAluno (int codMensagemAluno) throws Exception
     {
     	MensagemAluno mensagemAluno = null;
 
@@ -179,9 +185,9 @@ public class MensagensAlunos
         }
 
         return mensagemAluno;
-    }
+    }*/
 
-    public static MeuResultSet getTodasMensagensAlunos () throws Exception
+    public static MeuResultSet getMensagensAlunosOrdenadas () throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -190,7 +196,8 @@ public class MensagensAlunos
             String sql;
 
             sql = "SELECT * " +
-                  "FROM MensagensAlunos";
+                  "FROM MensagensAlunos "+
+            	  "order by EnvioAluno";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
@@ -204,7 +211,7 @@ public class MensagensAlunos
         return resultado;
     }
     
-    public static MeuResultSet getMensagensPeloRecebimento (String recebimento) throws Exception
+    public static MeuResultSet getMensagensPeloRA (String ra) throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -214,11 +221,11 @@ public class MensagensAlunos
 
             sql = "SELECT * " +
                   "FROM MensagensAlunos "+
-                  "WHERE Recebimento = ?";
+                  "WHERE RA = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             
-            BDSQLServer.COMANDO.setString (1, recebimento);
+            BDSQLServer.COMANDO.setString (1, ra);
 
             resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
         }

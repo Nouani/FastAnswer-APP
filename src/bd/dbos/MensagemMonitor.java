@@ -3,8 +3,10 @@ package bd.dbos;
 public class MensagemMonitor implements Cloneable
 {
     private int codMensagemMonitor;
+    private int codMonitor;
     private String mensagemMonitor;
     private String RA;
+    private String envioMonitor;
     private String recebimento;
  
     public void setCodMensagemMonitor(int codMensagemMonitor) throws Exception
@@ -13,7 +15,15 @@ public class MensagemMonitor implements Cloneable
             throw new Exception ("Código inválido");
 
         this.codMensagemMonitor = codMensagemMonitor;
-    }   
+    } 
+    
+    public void setCodMonitorEnviou(int codMonitor) throws Exception
+    {
+        if (codMonitor < 0)
+            throw new Exception ("Código do monitor inválido");
+
+        this.codMonitor = codMonitor;
+    }
 
     public void setMensagemMonitor (String mensagemMonitor) throws Exception
     {
@@ -32,6 +42,14 @@ public class MensagemMonitor implements Cloneable
         this.RA = RA;
     }
     
+    public void setEnvioMonitor (String envioMonitor) throws Exception
+    {
+        if (envioMonitor==null || envioMonitor.equals(""))
+            throw new Exception ("data não fornecida");
+
+        this.envioMonitor = envioMonitor;
+    }
+    
     public void setRecebimentoMonitor (String recebimento) throws Exception
     {
         if (recebimento==null || recebimento.equals(""))
@@ -45,6 +63,11 @@ public class MensagemMonitor implements Cloneable
     {
         return this.codMensagemMonitor;
     }
+    
+    public int getCodMonitorEnviou ()
+    {
+        return this.codMonitor;
+    }
 
     public String getMensagemMonitor ()
     {
@@ -56,16 +79,23 @@ public class MensagemMonitor implements Cloneable
         return this.RA;
     }
     
+    public String getEnvioMonitor ()
+    {
+        return this.envioMonitor;
+    }
+    
     public String getRecebimentoMonitor ()
     {
         return this.recebimento;
     }
 
-    public MensagemMonitor (int codMensagemMonitor, String mensagemMonitor, String RA, String recebimento) throws Exception
+    public MensagemMonitor (int codMensagemMonitor, int codMonitor, String mensagemMonitor, String RA, String envioMonitor, String recebimento) throws Exception
     {
         this.setCodMensagemMonitor (codMensagemMonitor);
+        this.setCodMonitorEnviou (codMonitor);
         this.setMensagemMonitor(mensagemMonitor);
         this.setRA(RA);
+        this.setEnvioMonitor(envioMonitor);
         this.setRecebimentoMonitor(recebimento);
     }
 
@@ -74,8 +104,10 @@ public class MensagemMonitor implements Cloneable
         String ret="";
 
         ret+="Código da Mensagem do Monitor: "+this.codMensagemMonitor+"\n";
+        ret+="Código do Monitor que enviou: "+this.codMensagemMonitor+"\n";
         ret+="Mensagem do Monitor..: "+this.mensagemMonitor  +"\n";
-        ret+="Código do Monitor a receber.: "+this.RA+"\n";
+        ret+="RA do aluno a receber.: "+this.RA+"\n";
+        ret+="Data e Horário do envio.: "+this.envioMonitor+"\n";
         ret+="Mensagem foi recebida?: "+this.recebimento;
 
         return ret;
@@ -96,11 +128,17 @@ public class MensagemMonitor implements Cloneable
 
         if (this.codMensagemMonitor!=monit.codMensagemMonitor)
             return false;
+        
+        if (this.codMonitor!=monit.codMonitor)
+            return false;
 
         if (!this.mensagemMonitor.equals(monit.mensagemMonitor))
             return false;
 
         if (!this.RA.equals(monit.RA))
+            return false;
+        
+        if (!this.envioMonitor.equals(monit.envioMonitor))
             return false;
         
         if (!this.recebimento.equals(monit.recebimento))
@@ -114,9 +152,14 @@ public class MensagemMonitor implements Cloneable
         int ret=666;
 
         ret = 7*ret + new Integer (this.codMensagemMonitor).hashCode();
+        ret = 7*ret + new Integer (this.codMonitor).hashCode();
         ret = 7*ret + this.mensagemMonitor.hashCode();
         ret = 7*ret + this.RA.hashCode();
+        ret = 7*ret + this.envioMonitor.hashCode();
         ret = 7*ret + this.recebimento.hashCode();
+        
+        if (ret < 0)
+        	ret = -ret;
 
         return ret;
     }
@@ -125,9 +168,11 @@ public class MensagemMonitor implements Cloneable
     public MensagemMonitor (MensagemMonitor modelo) throws Exception
     {
         this.codMensagemMonitor = modelo.codMensagemMonitor; 
+        this.codMonitor = modelo.codMonitor; 
         this.mensagemMonitor   = modelo.mensagemMonitor;   
         this.RA  = modelo.RA;  
-        this.recebimento  = modelo.recebimento;  
+        this.envioMonitor = modelo.envioMonitor;  
+        this.recebimento = modelo.recebimento;  
     }
 
     public Object clone ()
