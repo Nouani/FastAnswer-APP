@@ -51,6 +51,7 @@ public class ChatUsers extends JFrame {
 	private JTextField txtEnviar;
 	private JList listaUsuarios;
 	private JScrollPane scrollUsuarios;
+	private JTextArea txtAreaMensagens;
 	
 	private Aluno aluno;
 	private Monitor monitor;
@@ -101,7 +102,7 @@ public class ChatUsers extends JFrame {
 		JLabel lblInfo = new JLabel("Clique duas vezes no nome de algu\u00E9m para enviar uma mensagem");
 		lblInfo.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		JLabel lblSala = new JLabel("Voc\u00EA n\u00E3o est\u00E1 conectado a nenhuma sala!");
+		JLabel lblSala = new JLabel("Voc\u00EA n\u00E3o est\u00E1 conectado!");
 		lblSala.setFont(new Font("Tahoma", Font.BOLD, 18));
 		
 		JButton btnConectar = new JButton("Conectar");
@@ -111,7 +112,7 @@ public class ChatUsers extends JFrame {
 		listaUsuarios = new JList(getNomesDaLista());
 		scrollUsuarios.setViewportView(listaUsuarios);
 		
-		JTextArea txtAreaMensagens = new JTextArea();
+		txtAreaMensagens = new JTextArea();
 		txtAreaMensagens.setEditable(false);
 		scrollPane.setViewportView(txtAreaMensagens);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -196,6 +197,8 @@ public class ChatUsers extends JFrame {
 						btnConectar.setText("Desconectar");
 						btnEnviar.setEnabled(true);
 						
+						lblSala.setText("Você está conectado!");
+						
 						monitor.setAtividade("online");
 						Monitores.alterar(monitor);
 					}
@@ -206,6 +209,8 @@ public class ChatUsers extends JFrame {
 					try {
 						btnConectar.setText("Conectar");
 						btnEnviar.setEnabled(false);
+						
+						lblSala.setText("Você não está conectado!");
 						
 						monitor.setAtividade("offline");
 						Monitores.alterar(monitor);
@@ -242,6 +247,8 @@ public class ChatUsers extends JFrame {
 		MeuResultSet msgsAluno = null;
 		MeuResultSet msgsMonitor = null;
 		try {
+			System.out.println(alunoSelecionado.getRA());
+			System.out.println(monitor.getCodigo());
 			msgsAluno = MensagensAlunos.getMensagensPeloRA(alunoSelecionado.getRA(), monitor.getCodigo());
 			msgsMonitor = MensagensMonitores.getMensagensPeloCodMonitor(monitor.getCodigo(), alunoSelecionado.getRA());
 		}
@@ -274,27 +281,84 @@ public class ChatUsers extends JFrame {
 		catch(Exception erro) {
 			erro.printStackTrace();
 		}
-		/*String[] todasMensagens = new String[5];
-		for (MensagemAluno msgAluno : this.mensagensAluno) {
-			for (MensagemMonitor msgMonitor : this.mensagensMonitor) {
-				
-				
-				LocalDateTime dateTime = LocalDateTime.parse(msgAluno.getEnvioAluno());
-				System.out.println(dateTime);
-			}
-		}*/
+		String[] todasMensagens = new String[0];
 		
-		String msg = (this.mensagensAluno.get(0)).getEnvioAluno();
-		String ret = "";
-		System.out.println(msg);
-		ret += msg.substring(0, 10);
-		ret += "T";
-		ret += msg.substring(11);
-		System.out.println(ret);
-		LocalDateTime dateTime = LocalDateTime.parse(ret);
-		System.out.println(dateTime);
+		int contMsgAluno = 0;
+		int contMsgMonitor = 0;
+		int contador = 0;
+		
+		String nomeMonitor = null;
+		String nomeAluno = null;
+		try {
+			nomeMonitor = (Alunos.getAluno(monitor.getRA())).getNome();
+			nomeAluno = alunoSelecionado.getNome();
+		}
+		catch (Exception erro) 
+		{ } // sei que não vai dar erro
+		
+		while (contMsgAluno != mensagensAluno.size() && contMsgMonitor != mensagensMonitor.size()) {
+			LocalDateTime dataEnvioAluno = formatarData((mensagensAluno.get(contMsgAluno)).getEnvioAluno());
+			LocalDateTime dataEnvioMonitor = formatarData((mensagensMonitor.get(contMsgMonitor)).getEnvioMonitor());
+			
+			int result = dataEnvioAluno.compareTo(dataEnvioMonitor);
+			
+			if (contador == todasMensagens.length) {
+				todasMensagens = redimensionar(1, todasMensagens);
+			}
+			
+			if (result < 0) { // aluno é o mais antigo
+				todasMensagens[contador] = nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
+				contador++;
+				contMsgAluno++;
+			}
+			if (result > 0) { // monitor é o mais antigo
+				todasMensagens[contador] = nomeMonitor + ": " + mensagensMonitor.get(contMsgMonitor).getMensagemMonitor();
+				contador++;
+				contMsgMonitor++;
+			}
+			else { // é igual
+				
+			}
+		}
+		
+		while (contMsgAluno != mensagensAluno.size()) {
+			if (contador == todasMensagens.length) {
+				todasMensagens = redimensionar(1, todasMensagens);
+			}
+			
+			todasMensagens[contador] =  nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
+			contador++;
+			contMsgAluno++;
+		} 
+		while (contMsgMonitor != mensagensMonitor.size()) {
+			if (contador == todasMensagens.length) {
+				todasMensagens = redimensionar(1, todasMensagens);
+			}
+			
+			todasMensagens[contador] = nomeMonitor + ": " + mensagensMonitor.get(contMsgMonitor).getMensagemMonitor();
+			contador++;
+			contMsgMonitor++;
+		}
+		
+		for (int i = 0; i < todasMensagens.length; i++) {
+			System.out.println(todasMensagens[i]);
+			txtAreaMensagens.append(todasMensagens[i] + "\n");
+		}
+		
+		
+		
 		    /*LocalDateTime date1 = LocalDateTime.now();
 			System.out.println(date1);*/
+	}
+	
+	public LocalDateTime formatarData(String data) {
+		String dataFormatada = "";
+		dataFormatada += data.substring(0, 10);
+		dataFormatada += "T";
+		dataFormatada += data.substring(11);
+		
+		LocalDateTime dataConvertida = LocalDateTime.parse(dataFormatada);
+		return dataConvertida;
 	}
 	
 	public void setListAlunos(){
@@ -317,17 +381,17 @@ public class ChatUsers extends JFrame {
 		String[] nomes = new String[1];
 		int cont = 0;
 		for (Aluno aluno : this.listaAlunos) {
-			nomes[cont] = aluno.getNome();
 			if (cont == nomes.length) {
-				nomes = (String[])redimensionar(1, nomes);
+				nomes = redimensionar(1, nomes);
 			}
+			nomes[cont] = aluno.getNome();
 			cont++;
 		}
 		return nomes;
 	}
 	
-	public Object[] redimensionar(int val, Object[] vetAtual) {
-		Object[] vetNovo = new Object[vetAtual.length + val];
+	public String[] redimensionar(int val, String[] vetAtual) {
+		String[] vetNovo = new String[vetAtual.length + val];
 		for (int i = 0; i < vetAtual.length; i++) {
 			vetNovo[i] = vetAtual[i];
 		}
