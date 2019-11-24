@@ -127,22 +127,21 @@ public class MensagensAlunos
             String sql;
 
             sql = "UPDATE MensagensAlunos " +
-            	  "SET RA=? " +
-                  "SET MensagemAluno=? " +
-                  "SET CodMonitor=? " +
-                  "SET EnvioAluno=? " +
+            	  /*"SET RA=?, " +
+                  "MensagemAluno=?, " +
+                  "CodMonitor=?, " +
+                  "EnvioAluno=?, " +*/
                   "SET Recebimento=? " +
                   "WHERE CodMensagemAluno = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setString (1, mensagemAluno.getMensagemAluno());
-            BDSQLServer.COMANDO.setString (2, mensagemAluno.getRAEnvio());
-            BDSQLServer.COMANDO.setInt  (3, mensagemAluno.getCodMonitor());
-            BDSQLServer.COMANDO.setString (4, mensagemAluno.getEnvioAluno());
-            BDSQLServer.COMANDO.setString (5, mensagemAluno.getRecebimentoAluno());
-            BDSQLServer.COMANDO.setInt    (6, mensagemAluno.getCodMensagemAluno());
-
+            /*BDSQLServer.COMANDO.setString (1, mensagemAluno.getRAEnvio());
+            BDSQLServer.COMANDO.setString (2, mensagemAluno.getMensagemAluno());
+            BDSQLServer.COMANDO.setInt    (3, mensagemAluno.getCodMonitor());
+            BDSQLServer.COMANDO.setString (4, mensagemAluno.getEnvioAluno());*/
+            BDSQLServer.COMANDO.setString (1, mensagemAluno.getRecebimentoAluno());
+            BDSQLServer.COMANDO.setInt    (2, mensagemAluno.getCodMensagemAluno());
+            System.out.println(mensagemAluno);
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
         }

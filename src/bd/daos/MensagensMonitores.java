@@ -55,28 +55,28 @@ public class MensagensMonitores
         return retorno;
     }
 
-    public static void incluir (MensagemMonitor MensagemMonitor) throws Exception
+    public static void incluir (MensagemMonitor mensagemMonitor) throws Exception
     {
-        if (MensagemMonitor==null)
+        if (mensagemMonitor==null)
             throw new Exception ("Mensagem a ser enviada nao fornecida");
 
         try
         {
             String sql;
 
-            sql = "INSERT INTO MensagensMonitores " +
-                  "(CodMensagemMonitor,CodMonitor,MensagemMonitor,RA,DataEnvio,Recebimento) " +
+            /*sql = "INSERT INTO MensagensMonitores " +
+                  "(CodMonitor,MensagemMonitor,RA,DataEnvio,Recebimento) " +
                   "VALUES " +
-                  "(?,?,?,?,?,?)";
+                  "(?,?,?,?,?)";*/
+            sql = "insert into MensagensMonitores values(?,?,?,?,?)";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
-            BDSQLServer.COMANDO.setInt(1, MensagemMonitor.getCodMensagemMonitor());
-            BDSQLServer.COMANDO.setInt(2, MensagemMonitor.getCodMonitorEnviou());
-            BDSQLServer.COMANDO.setString(3, MensagemMonitor.getMensagemMonitor());
-            BDSQLServer.COMANDO.setString(4, MensagemMonitor.getRA());
-            BDSQLServer.COMANDO.setString(5, MensagemMonitor.getEnvioMonitor());
-            BDSQLServer.COMANDO.setString(6, MensagemMonitor.getRecebimentoMonitor());
+            BDSQLServer.COMANDO.setInt(1, mensagemMonitor.getCodMonitorEnviou());
+            BDSQLServer.COMANDO.setString(2, mensagemMonitor.getMensagemMonitor());
+            BDSQLServer.COMANDO.setString(3, mensagemMonitor.getRA());
+            BDSQLServer.COMANDO.setString(4, mensagemMonitor.getEnvioMonitor());
+            BDSQLServer.COMANDO.setString(5, mensagemMonitor.getRecebimentoMonitor());
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();

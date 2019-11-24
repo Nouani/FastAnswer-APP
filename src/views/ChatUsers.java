@@ -62,6 +62,8 @@ public class ChatUsers extends JFrame {
 	private ArrayList<MensagemMonitor> mensagensMonitor;
 	private ArrayList<MensagemAluno> mensagensAluno;
 	
+	private int indiceSelecionado;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -117,6 +119,9 @@ public class ChatUsers extends JFrame {
 		txtAreaMensagens = new JTextArea();
 		txtAreaMensagens.setEditable(false);
 		scrollPane.setViewportView(txtAreaMensagens);
+		
+		JButton btnAtualizar = new JButton("Atualizar Mensagens");
+		btnAtualizar.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -140,7 +145,9 @@ public class ChatUsers extends JFrame {
 									.addGap(6)
 									.addComponent(btnEnviar, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)))
 							.addGap(10)
-							.addComponent(scrollUsuarios, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnAtualizar, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+								.addComponent(scrollUsuarios, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))))
 					.addGap(6))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -156,13 +163,14 @@ public class ChatUsers extends JFrame {
 						.addComponent(lblInfo, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 					.addGap(11)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
-							.addGap(11)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(txtEnviar, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnEnviar, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)))
-						.addComponent(scrollUsuarios, GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE))
+						.addComponent(scrollUsuarios, GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))
+					.addGap(11)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(txtEnviar, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(btnEnviar, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnAtualizar, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)))
 					.addGap(11))
 		);
 		contentPane.setLayout(gl_contentPane);
@@ -199,6 +207,8 @@ public class ChatUsers extends JFrame {
 						btnConectar.setText("Desconectar");
 						btnEnviar.setEnabled(true);
 						
+						btnAtualizar.setEnabled(true);
+						
 						lblSala.setText("Você está conectado!");
 						
 						monitor.setAtividade("online");
@@ -211,6 +221,8 @@ public class ChatUsers extends JFrame {
 					try {
 						btnConectar.setText("Conectar");
 						btnEnviar.setEnabled(false);
+						
+						btnAtualizar.setEnabled(false);
 						
 						lblSala.setText("Você não está conectado!");
 						
@@ -228,10 +240,10 @@ public class ChatUsers extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					if (btnEnviar.isEnabled()) { // se está conectado
-						int index = listaUsuarios.locationToIndex(e.getPoint());
+						indiceSelecionado = listaUsuarios.locationToIndex(e.getPoint());
 						String nome = (String)listaUsuarios.getSelectedValue();
 						if (nome != null) {
-							Aluno alunoSelecionado = listaAlunos.get(index);
+							Aluno alunoSelecionado = listaAlunos.get(indiceSelecionado);
 							carregarMensagens(alunoSelecionado);
 						}
 					}
@@ -247,14 +259,43 @@ public class ChatUsers extends JFrame {
 				}
 			}
 		});
+		
+		btnAtualizar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				carregarMensagens(getAlunoSelecionado());
+			}
+		});
+		
+		btnEnviar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Aluno alunoSelecionado = getAlunoSelecionado();
+				if ((txtEnviar.getText().trim()).equals(""))
+					JOptionPane.showMessageDialog(null, "Digite o que deseja mandar para o " + alunoSelecionado.getNome());
+				else {
+					enviarMensagem(alunoSelecionado, txtEnviar.getText());
+					carregarMensagens(alunoSelecionado);
+				}
+					
+				// inserir no DB
+				// carregar na tela
+			}
+		});
+	}
+	
+	public void enviarMensagem(Aluno alunoSelecionado, String mensagem) {
+		try {
+			MensagemMonitor msgMonitor = new MensagemMonitor(0, this.monitor.getCodigo(), mensagem, alunoSelecionado.getRA(), ""+LocalDateTime.now(), "N");
+			MensagensMonitores.incluir(msgMonitor);
+		} catch (Exception e) 
+		{ } // sei que não vai dar erro
 	}
 	
 	public void carregarMensagens(Aluno alunoSelecionado) {
 		MeuResultSet msgsAluno = null;
 		MeuResultSet msgsMonitor = null;
 		try {
-			System.out.println(alunoSelecionado.getRA());
-			System.out.println(monitor.getCodigo());
 			msgsAluno = MensagensAlunos.getMensagensPeloRA(alunoSelecionado.getRA(), monitor.getCodigo());
 			msgsMonitor = MensagensMonitores.getMensagensPeloCodMonitor(monitor.getCodigo(), alunoSelecionado.getRA());
 		}
@@ -311,18 +352,23 @@ public class ChatUsers extends JFrame {
 			LocalDateTime dataEnvioMonitor = formatarData((mensagensMonitor.get(contMsgMonitor)).getEnvioMonitor());
 			
 			int result = dataEnvioAluno.compareTo(dataEnvioMonitor);
-			
 			if (contador == todasMensagens.length) {
 				todasMensagens = redimensionar(1, todasMensagens);
 			}
 			
 			if (result < 0) { // aluno é o mais antigo
+				System.out.println("Inseriu o aluno com tempo = "+dataEnvioAluno);
+				System.out.println();
+				System.out.println();
 				mensagensAluno.get(contMsgAluno);
 				todasMensagens[contador] = nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
 				contador++;
 				contMsgAluno++;
 			}
 			if (result > 0) { // monitor é o mais antigo
+				System.out.println("Inseriu o monitor com tempo = "+dataEnvioMonitor);
+				System.out.println();
+				System.out.println();
 				todasMensagens[contador] = nomeMonitor + ": " + mensagensMonitor.get(contMsgMonitor).getMensagemMonitor();
 				contador++;
 				contMsgMonitor++;
@@ -338,8 +384,9 @@ public class ChatUsers extends JFrame {
 			}
 			
 			String recebimento = mensagensAluno.get(contMsgAluno).getRecebimentoAluno();
-			if (recebimento.equals("N")  && !naoRecebidas) {
+			if (recebimento.equals("N")) {
 				if (!naoRecebidas) {
+					marcarRecebidas(mensagensAluno.get(contMsgAluno));
 					todasMensagens[contador] = "\nNovas mensagens: ";
 					naoRecebidas = true;
 					contador++;
@@ -368,7 +415,6 @@ public class ChatUsers extends JFrame {
 		
 		txtAreaMensagens.setText("");
 		for (int i = 0; i < todasMensagens.length; i++) {
-			System.out.println(todasMensagens[i]);
 			txtAreaMensagens.append(todasMensagens[i] + "\n");
 		}
 		
@@ -426,13 +472,9 @@ public class ChatUsers extends JFrame {
 		return nomes;
 	}
 	
-	public String[] redimensionar(int val, String[] vetAtual) {
-		String[] vetNovo = new String[vetAtual.length + val];
-		for (int i = 0; i < vetAtual.length; i++) {
-			vetNovo[i] = vetAtual[i];
-		}
-		vetAtual = vetNovo;
-		return vetAtual;
+	public Aluno getAlunoSelecionado() {
+		Aluno alunoSelecionado = listaAlunos.get(indiceSelecionado);
+		return alunoSelecionado;
 	}
 	
 	public void setMonitor(Monitor monitor) throws Exception {
@@ -445,5 +487,14 @@ public class ChatUsers extends JFrame {
 		if (aluno == null)
 			throw new Exception("Aluno inválido");
 		this.aluno = aluno;
+	}
+	
+	public String[] redimensionar(int val, String[] vetAtual) {
+		String[] vetNovo = new String[vetAtual.length + val];
+		for (int i = 0; i < vetAtual.length; i++) {
+			vetNovo[i] = vetAtual[i];
+		}
+		vetAtual = vetNovo;
+		return vetAtual;
 	}
 }
