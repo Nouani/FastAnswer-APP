@@ -286,7 +286,8 @@ public class ChatUsers extends JFrame {
 	
 	public void enviarMensagem(Aluno alunoSelecionado, String mensagem) {
 		try {
-			MensagemMonitor msgMonitor = new MensagemMonitor(0, this.monitor.getCodigo(), mensagem, alunoSelecionado.getRA(), ""+LocalDateTime.now(), "N");
+			int ultimaPosicao = (mensagensMonitor.get(mensagensMonitor.size()-1)).getOrdemMensagem();
+			MensagemMonitor msgMonitor = new MensagemMonitor(0, this.monitor.getCodigo(), mensagem, alunoSelecionado.getRA(), ultimaPosicao+1, "N");
 			MensagensMonitores.incluir(msgMonitor);
 		} catch (Exception e) 
 		{ } // sei que não vai dar erro
@@ -312,7 +313,7 @@ public class ChatUsers extends JFrame {
 													 msgsAluno.getString("RA"),
 													 msgsAluno.getString("MensagemAluno"),
 													 msgsAluno.getInt("CodMonitor"),
-													 msgsAluno.getString("EnvioAluno"),
+													 msgsAluno.getInt("OrdemMensagem"),
 													 msgsAluno.getString("Recebimento")));
 			}
 			
@@ -321,7 +322,7 @@ public class ChatUsers extends JFrame {
 													 msgsMonitor.getInt("CodMonitor"),
 													 msgsMonitor.getString("MensagemMonitor"),
 													 msgsMonitor.getString("RA"),
-													 msgsMonitor.getString("EnvioMonitor"),
+													 msgsMonitor.getInt("OrdemMensagem"),
 													 msgsMonitor.getString("Recebimento")));
 			}
 		}
@@ -348,27 +349,27 @@ public class ChatUsers extends JFrame {
 		{ } // sei que não vai dar erro
 		
 		while (contMsgAluno != mensagensAluno.size() && contMsgMonitor != mensagensMonitor.size()) {
-			LocalDateTime dataEnvioAluno = formatarData((mensagensAluno.get(contMsgAluno)).getEnvioAluno());
-			LocalDateTime dataEnvioMonitor = formatarData((mensagensMonitor.get(contMsgMonitor)).getEnvioMonitor());
+			int posicaoEnvioAluno = (mensagensAluno.get(contMsgAluno)).getOrdemMensagem();
+			int posicaoEnvioMonitor = (mensagensMonitor.get(contMsgMonitor)).getOrdemMensagem();
 			
-			int result = dataEnvioAluno.compareTo(dataEnvioMonitor);
+
 			if (contador == todasMensagens.length) {
 				todasMensagens = redimensionar(1, todasMensagens);
 			}
 			
-			if (result < 0) { // aluno é o mais antigo
-				System.out.println("Inseriu o aluno com tempo = "+dataEnvioAluno);
+			if (posicaoEnvioAluno < posicaoEnvioMonitor) { // aluno é o mais antigo
+				/*System.out.println("Inseriu o aluno com tempo = "+dataEnvioAluno);
 				System.out.println();
-				System.out.println();
+				System.out.println();*/
 				mensagensAluno.get(contMsgAluno);
 				todasMensagens[contador] = nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
 				contador++;
 				contMsgAluno++;
 			}
-			if (result > 0) { // monitor é o mais antigo
-				System.out.println("Inseriu o monitor com tempo = "+dataEnvioMonitor);
+			if (posicaoEnvioMonitor < posicaoEnvioAluno) { // monitor é o mais antigo
+				/*System.out.println("Inseriu o monitor com tempo = "+dataEnvioMonitor);
 				System.out.println();
-				System.out.println();
+				System.out.println();*/
 				todasMensagens[contador] = nomeMonitor + ": " + mensagensMonitor.get(contMsgMonitor).getMensagemMonitor();
 				contador++;
 				contMsgMonitor++;
@@ -433,7 +434,7 @@ public class ChatUsers extends JFrame {
 		{ } // sei que não vai dar erro
 	}
 	
-	public LocalDateTime formatarData(String data) {
+	/*public LocalDateTime formatarData(String data) {
 		String dataFormatada = "";
 		dataFormatada += data.substring(0, 10);
 		dataFormatada += "T";
@@ -441,7 +442,7 @@ public class ChatUsers extends JFrame {
 		
 		LocalDateTime dataConvertida = LocalDateTime.parse(dataFormatada);
 		return dataConvertida;
-	}
+	}*/
 	
 	public void setListAlunos(){
 		try {

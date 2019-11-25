@@ -6,7 +6,7 @@ public class MensagemAluno implements Cloneable
     private String RA;
     private String mensagemAluno;
     private int codMonitor;
-    private String envioAluno;
+    private int ordemMensagem;
     private String recebimento;
  
     public void setCodMensagemAluno(int codMensagemAluno) throws Exception
@@ -42,12 +42,12 @@ public class MensagemAluno implements Cloneable
         this.codMonitor = codMonitor;
     }
     
-    public void setEnvioAluno (String envioAluno) throws Exception
+    public void setOrdemMensagem (int ordemMensagem) throws Exception
     {
-        if (envioAluno==null || envioAluno.equals(""))
-            throw new Exception ("data não fornecida");
+        if (ordemMensagem<0)
+            throw new Exception ("ordem inválida");
 
-        this.envioAluno = envioAluno;
+        this.ordemMensagem = ordemMensagem;
     }
     
     public void setRecebimentoAluno (String recebimento) throws Exception
@@ -79,9 +79,9 @@ public class MensagemAluno implements Cloneable
         return this.codMonitor;
     }
     
-    public String getEnvioAluno ()
+    public int getOrdemMensagem ()
     {
-        return this.envioAluno;
+        return this.ordemMensagem;
     }
     
     public String getRecebimentoAluno ()
@@ -89,13 +89,13 @@ public class MensagemAluno implements Cloneable
         return this.recebimento;
     }
 
-    public MensagemAluno (int codMensagemAluno, String RA, String mensagemAluno, int codMonitor, String envioAluno, String recebimento) throws Exception
+    public MensagemAluno (int codMensagemAluno, String RA, String mensagemAluno, int codMonitor, int ordemMensagem, String recebimento) throws Exception
     {
         this.setCodMensagemAluno (codMensagemAluno);
         this.setRAEnvio (RA);
         this.setMensagemAluno(mensagemAluno);
         this.setCodMonitor(codMonitor);
-        this.setEnvioAluno(envioAluno);
+        this.setOrdemMensagem(ordemMensagem);
         this.setRecebimentoAluno(recebimento);
     }
 
@@ -107,7 +107,7 @@ public class MensagemAluno implements Cloneable
         ret+="RA do Aluno que enviou: "+this.RA+"\n";
         ret+="Mensagem do Aluno..: "+this.mensagemAluno  +"\n";
         ret+="Código do Monitor a receber.: "+this.codMonitor+"\n";
-        ret+="Data e Horário do envio.: "+this.envioAluno+"\n";
+        ret+="Data e Horário do envio.: "+this.ordemMensagem+"\n";
         ret+="Mensagem foi recebida?: "+this.recebimento;
 
         return ret;
@@ -138,7 +138,7 @@ public class MensagemAluno implements Cloneable
         if (this.codMonitor!=alu.codMonitor)
             return false;
         
-        if (!this.envioAluno.equals(alu.envioAluno))
+        if (this.ordemMensagem!=alu.ordemMensagem)
             return false;
         
         if (!this.recebimento.equals(alu.recebimento))
@@ -155,7 +155,7 @@ public class MensagemAluno implements Cloneable
         ret = 7*ret + this.RA.hashCode();
         ret = 7*ret + this.mensagemAluno.hashCode();
         ret = 7*ret + new Integer (this.codMonitor).hashCode();
-        ret = 7*ret + this.envioAluno.hashCode();
+        ret = 7*ret + new Integer (this.ordemMensagem).hashCode();
         ret = 7*ret + this.recebimento.hashCode();
 
         return ret;
@@ -168,7 +168,7 @@ public class MensagemAluno implements Cloneable
         this.RA = modelo.RA; 
         this.mensagemAluno   = modelo.mensagemAluno;   
         this.codMonitor  = modelo.codMonitor;  
-        this.envioAluno  = modelo.envioAluno;  
+        this.ordemMensagem  = modelo.ordemMensagem;  
         this.recebimento  = modelo.recebimento;  
     }
 

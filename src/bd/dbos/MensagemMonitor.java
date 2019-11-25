@@ -6,7 +6,7 @@ public class MensagemMonitor implements Cloneable
     private int codMonitor;
     private String mensagemMonitor;
     private String RA;
-    private String envioMonitor;
+    private int ordemMensagem;
     private String recebimento;
  
     public void setCodMensagemMonitor(int codMensagemMonitor) throws Exception
@@ -42,12 +42,12 @@ public class MensagemMonitor implements Cloneable
         this.RA = RA;
     }
     
-    public void setEnvioMonitor (String envioMonitor) throws Exception
+    public void setOrdemMensagem (int ordemMensagem) throws Exception
     {
-        if (envioMonitor==null || envioMonitor.equals(""))
-            throw new Exception ("data não fornecida");
+        if (ordemMensagem < 0)
+            throw new Exception ("ordem inválida");
 
-        this.envioMonitor = envioMonitor;
+        this.ordemMensagem = ordemMensagem;
     }
     
     public void setRecebimentoMonitor (String recebimento) throws Exception
@@ -79,9 +79,9 @@ public class MensagemMonitor implements Cloneable
         return this.RA;
     }
     
-    public String getEnvioMonitor ()
+    public int getOrdemMensagem ()
     {
-        return this.envioMonitor;
+        return this.ordemMensagem;
     }
     
     public String getRecebimentoMonitor ()
@@ -89,13 +89,13 @@ public class MensagemMonitor implements Cloneable
         return this.recebimento;
     }
 
-    public MensagemMonitor (int codMensagemMonitor, int codMonitor, String mensagemMonitor, String RA, String envioMonitor, String recebimento) throws Exception
+    public MensagemMonitor (int codMensagemMonitor, int codMonitor, String mensagemMonitor, String RA, int ordemMensagem, String recebimento) throws Exception
     {
         this.setCodMensagemMonitor (codMensagemMonitor);
         this.setCodMonitorEnviou (codMonitor);
         this.setMensagemMonitor(mensagemMonitor);
         this.setRA(RA);
-        this.setEnvioMonitor(envioMonitor);
+        this.setOrdemMensagem(ordemMensagem);
         this.setRecebimentoMonitor(recebimento);
     }
 
@@ -107,7 +107,7 @@ public class MensagemMonitor implements Cloneable
         ret+="Código do Monitor que enviou: "+this.codMensagemMonitor+"\n";
         ret+="Mensagem do Monitor..: "+this.mensagemMonitor  +"\n";
         ret+="RA do aluno a receber.: "+this.RA+"\n";
-        ret+="Data e Horário do envio.: "+this.envioMonitor+"\n";
+        ret+="Data e Horário do envio.: "+this.ordemMensagem+"\n";
         ret+="Mensagem foi recebida?: "+this.recebimento;
 
         return ret;
@@ -138,7 +138,7 @@ public class MensagemMonitor implements Cloneable
         if (!this.RA.equals(monit.RA))
             return false;
         
-        if (!this.envioMonitor.equals(monit.envioMonitor))
+        if (this.ordemMensagem!=monit.ordemMensagem)
             return false;
         
         if (!this.recebimento.equals(monit.recebimento))
@@ -155,7 +155,7 @@ public class MensagemMonitor implements Cloneable
         ret = 7*ret + new Integer (this.codMonitor).hashCode();
         ret = 7*ret + this.mensagemMonitor.hashCode();
         ret = 7*ret + this.RA.hashCode();
-        ret = 7*ret + this.envioMonitor.hashCode();
+        ret = 7*ret + new Integer (this.ordemMensagem).hashCode();
         ret = 7*ret + this.recebimento.hashCode();
         
         if (ret < 0)
@@ -171,7 +171,7 @@ public class MensagemMonitor implements Cloneable
         this.codMonitor = modelo.codMonitor; 
         this.mensagemMonitor   = modelo.mensagemMonitor;   
         this.RA  = modelo.RA;  
-        this.envioMonitor = modelo.envioMonitor;  
+        this.ordemMensagem = modelo.ordemMensagem;  
         this.recebimento = modelo.recebimento;  
     }
 

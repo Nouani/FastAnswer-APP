@@ -65,7 +65,7 @@ public class MensagensAlunos
             String sql;
 
             sql = "INSERT INTO MensagensAlunos " +
-                  "(CodMensagemAluno,RA,MensagemAluno,CodMonitor,DataEnvio,Recebimento) " +
+                  "(CodMensagemAluno,RA,MensagemAluno,CodMonitor,DataEnvio,OrdemMensagem) " +
                   "VALUES " +
                   "(?,?,?,?,?,?)";
 
@@ -75,7 +75,7 @@ public class MensagensAlunos
             BDSQLServer.COMANDO.setString(2, mensagemAluno.getRAEnvio());
             BDSQLServer.COMANDO.setString(3, mensagemAluno.getMensagemAluno());
             BDSQLServer.COMANDO.setInt(4, mensagemAluno.getCodMonitor());
-            BDSQLServer.COMANDO.setString(5, mensagemAluno.getEnvioAluno());
+            BDSQLServer.COMANDO.setInt(5, mensagemAluno.getOrdemMensagem());
             BDSQLServer.COMANDO.setString(6, mensagemAluno.getRecebimentoAluno());
 
             BDSQLServer.COMANDO.executeUpdate ();
@@ -196,7 +196,7 @@ public class MensagensAlunos
 
             sql = "SELECT * " +
                   "FROM MensagensAlunos "+
-            	  "order by EnvioAluno";
+            	  "order by OrdemMensagem";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
@@ -222,7 +222,7 @@ public class MensagensAlunos
                   "FROM MensagensAlunos "+
                   "WHERE RA = ? AND "+
                   "CodMonitor = ? "+
-                  "order by EnvioAluno";
+                  "order by OrdemMensagem";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             

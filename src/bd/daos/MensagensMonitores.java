@@ -65,7 +65,7 @@ public class MensagensMonitores
             String sql;
 
             /*sql = "INSERT INTO MensagensMonitores " +
-                  "(CodMonitor,MensagemMonitor,RA,DataEnvio,Recebimento) " +
+                  "(CodMonitor,MensagemMonitor,RA,DataEnvio,OrdemMensagem) " +
                   "VALUES " +
                   "(?,?,?,?,?)";*/
             sql = "insert into MensagensMonitores values(?,?,?,?,?)";
@@ -75,7 +75,7 @@ public class MensagensMonitores
             BDSQLServer.COMANDO.setInt(1, mensagemMonitor.getCodMonitorEnviou());
             BDSQLServer.COMANDO.setString(2, mensagemMonitor.getMensagemMonitor());
             BDSQLServer.COMANDO.setString(3, mensagemMonitor.getRA());
-            BDSQLServer.COMANDO.setString(4, mensagemMonitor.getEnvioMonitor());
+            BDSQLServer.COMANDO.setInt(4, mensagemMonitor.getOrdemMensagem());
             BDSQLServer.COMANDO.setString(5, mensagemMonitor.getRecebimentoMonitor());
 
             BDSQLServer.COMANDO.executeUpdate ();
@@ -130,7 +130,7 @@ public class MensagensMonitores
             	  "SET CodMonitor=? " +
                   "SET MensagemMonitor=? " +
                   "SET RA=? " +
-                  "SET EnvioMonitor=? " +
+                  "SET OrdemMensagem=? " +
                   "SET Recebimento=? " +
                   "WHERE CodMensagemMonitor = ?";
 
@@ -139,7 +139,7 @@ public class MensagensMonitores
             BDSQLServer.COMANDO.setInt (1, mensagemMonitor.getCodMonitorEnviou());
             BDSQLServer.COMANDO.setString(2, mensagemMonitor.getMensagemMonitor());
             BDSQLServer.COMANDO.setString(3, mensagemMonitor.getRA());
-            BDSQLServer.COMANDO.setString(4, mensagemMonitor.getEnvioMonitor());
+            BDSQLServer.COMANDO.setInt(4, mensagemMonitor.getOrdemMensagem());
             BDSQLServer.COMANDO.setString(5, mensagemMonitor.getRecebimentoMonitor());
             BDSQLServer.COMANDO.setInt(6, mensagemMonitor.getCodMensagemMonitor());
 
@@ -197,7 +197,7 @@ public class MensagensMonitores
 
             sql = "SELECT * " +
                   "FROM MensagensMonitores "+
-            	  "order by EnvioMonitor";
+            	  "order by OrdemMensagem";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
@@ -223,7 +223,7 @@ public class MensagensMonitores
                    "FROM MensagensMonitores "+
                    "WHERE CodMonitor = ? AND "+
                    "RA = ? "+
-                   "order by EnvioMonitor";
+                   "order by OrdemMensagem";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             
