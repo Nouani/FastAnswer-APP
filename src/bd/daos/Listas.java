@@ -66,12 +66,12 @@ public class Listas
         try
         {
             String sql;
-
+            System.out.println("C3");
             sql = "INSERT INTO LISTAS " +
-                  "(CODLISTA, CODMATERIA, ARQUIVO) " +
+                  "(CODMATERIA, ARQUIVO, NOMELISTA) " +
                   "VALUES " +
                   "(?,?,?)";
-
+            System.out.println("C4");
             BDSQLServer.COMANDO.prepareStatement (sql);
             
             String diretorio = lista.getArquivo();
@@ -85,13 +85,14 @@ public class Listas
             while (offset < bytes.length && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
                 offset += numRead;
             }
-
-            BDSQLServer.COMANDO.setInt(1, lista.getCodigo ());
-            BDSQLServer.COMANDO.setInt(2, lista.getCodMateria ());
-            BDSQLServer.COMANDO.setBytes(3, bytes);
-
+            System.out.println("C5");
+            BDSQLServer.COMANDO.setInt(1, lista.getCodMateria ());
+            BDSQLServer.COMANDO.setBytes(2, bytes);
+            BDSQLServer.COMANDO.setString(3, lista.getNomeLista());
+            
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
+            System.out.println("C6");
         }
         catch (SQLException erro)
         {
@@ -139,8 +140,9 @@ public class Listas
             String sql;
 
             sql = "UPDATE LISTAS " +
-                  "SET CODMATERIA=? " +
-                  "SET ARQUIVO=? " +
+                  "SET CODMATERIA=?, " +
+                  "ARQUIVO=?, " +
+                  "NOMELISTA=? " +
                   "WHERE CODLISTA = ?";
 
             BDSQLServer.COMANDO.prepareStatement (sql);
@@ -159,7 +161,8 @@ public class Listas
 
             BDSQLServer.COMANDO.setInt(1, lista.getCodMateria());
             BDSQLServer.COMANDO.setBytes(2, bytes);
-            BDSQLServer.COMANDO.setInt(3, lista.getCodigo ());
+            BDSQLServer.COMANDO.setString(3, lista.getNomeLista());
+            BDSQLServer.COMANDO.setInt(4, lista.getCodigo ());
 
             BDSQLServer.COMANDO.executeUpdate ();
             BDSQLServer.COMANDO.commit        ();
@@ -171,7 +174,7 @@ public class Listas
         }
     }
 
-    public static Lista getLista(int codigo) throws Exception
+    /*public static Lista getLista(int codigo) throws Exception
     {
         Lista lista = null;
 
@@ -214,7 +217,7 @@ public class Listas
         }
 
         return lista;
-    }
+    }*/
 
     public static MeuResultSet getListas () throws Exception
     {

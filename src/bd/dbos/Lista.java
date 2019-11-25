@@ -5,10 +5,11 @@ public class Lista implements Cloneable
     private int    codLista;
     private int    codMateria;
     private String arquivo;
+    private String nomeLista;
  
     public void setCodigo (int codigo) throws Exception
     {
-        if (codigo <= 0)
+        if (codigo < 0)
             throw new Exception ("Codigo da lista é invalidp");
 
         this.codLista = codigo;
@@ -29,6 +30,14 @@ public class Lista implements Cloneable
 
         this.arquivo = arquivo;
     }
+    
+    public void setNomeLista (String nomeLista) throws Exception
+    {
+        if (nomeLista==null || nomeLista.equals(""))
+            throw new Exception ("Nome nao fornecido");
+
+        this.nomeLista = nomeLista;
+    }
 
     public int getCodigo ()
     {
@@ -44,12 +53,23 @@ public class Lista implements Cloneable
     {
         return this.arquivo;
     }
-
-    public Lista (int codLista, int codMateria, String arquivo) throws Exception
+    
+    public String getNomeLista ()
     {
+        return this.nomeLista;
+    }
+
+    public Lista (int codLista, int codMateria, String arquivo, String nomeLista) throws Exception
+    {
+    	System.out.println("dasdas");
         this.setCodigo (codLista);
+        System.out.println("dasdas");
         this.setCodMateria (codMateria);
+        System.out.println("dasdas");
         this.setArquivo (arquivo);
+        System.out.println("dasdas");
+        this.setNomeLista(nomeLista);
+        System.out.println("dasdas");
     }
 
     public String toString ()
@@ -59,6 +79,7 @@ public class Lista implements Cloneable
         ret+="Codigo da Lista: "+this.codLista+"\n";
         ret+="Codigo da Matéria..: "+this.codMateria  +"\n";
         ret+="Arquivo..: "+this.arquivo  +"\n";
+        ret+="Nome da Lista..: "+this.nomeLista;
 
         return ret;
     }
@@ -82,7 +103,10 @@ public class Lista implements Cloneable
         if (this.codMateria!=list.codMateria)
             return false;
 
-        if (this.arquivo!=list.arquivo)
+        if (this.arquivo.equals(list.arquivo))
+            return false;
+        
+        if (this.nomeLista.equals(list.nomeLista))
             return false;
 
         return true;
@@ -95,6 +119,7 @@ public class Lista implements Cloneable
         ret = 7*ret + new Integer(this.codLista).hashCode();
         ret = 7*ret + new Integer(this.codMateria).hashCode();
         ret = 7*ret + this.arquivo.hashCode();
+        ret = 7*ret + this.nomeLista.hashCode();
 
         return ret;
     }
@@ -102,9 +127,10 @@ public class Lista implements Cloneable
 
     public Lista (Lista modelo) throws Exception
     {
-        this.codLista = modelo.codLista; // nao clono, pq nao eh objeto
-        this.codMateria = modelo.codMateria;   // nao clono, pq nao eh clonavel
-        this.arquivo = modelo.arquivo;  // nao clono, pq nao eh objeto
+        this.codLista = modelo.codLista;
+        this.codMateria = modelo.codMateria;   
+        this.arquivo = modelo.arquivo;  
+        this.nomeLista = modelo.arquivo;  
     }
 
     public Object clone ()

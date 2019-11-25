@@ -62,6 +62,8 @@ public class ChatUsers extends JFrame {
 	private ArrayList<MensagemMonitor> mensagensMonitor;
 	private ArrayList<MensagemAluno> mensagensAluno;
 	
+	private String[] todasMensagens;
+	
 	private int indiceSelecionado;
 	
 	/**
@@ -274,6 +276,7 @@ public class ChatUsers extends JFrame {
 				if ((txtEnviar.getText().trim()).equals(""))
 					JOptionPane.showMessageDialog(null, "Digite o que deseja mandar para o " + alunoSelecionado.getNome());
 				else {
+					txtEnviar.setText("");
 					enviarMensagem(alunoSelecionado, txtEnviar.getText());
 					carregarMensagens(alunoSelecionado);
 				}
@@ -286,7 +289,8 @@ public class ChatUsers extends JFrame {
 	
 	public void enviarMensagem(Aluno alunoSelecionado, String mensagem) {
 		try {
-			int ultimaPosicao = (mensagensMonitor.get(mensagensMonitor.size()-1)).getOrdemMensagem();
+			int ultimaPosicao = this.todasMensagens.length;
+			System.out.println(ultimaPosicao);
 			MensagemMonitor msgMonitor = new MensagemMonitor(0, this.monitor.getCodigo(), mensagem, alunoSelecionado.getRA(), ultimaPosicao+1, "N");
 			MensagensMonitores.incluir(msgMonitor);
 		} catch (Exception e) 
@@ -330,7 +334,7 @@ public class ChatUsers extends JFrame {
 			erro.printStackTrace();
 		}
 		
-		String[] todasMensagens = new String[0];
+		todasMensagens = new String[0];
 		
 		boolean naoRecebidas = false;
 		
@@ -358,18 +362,12 @@ public class ChatUsers extends JFrame {
 			}
 			
 			if (posicaoEnvioAluno < posicaoEnvioMonitor) { // aluno é o mais antigo
-				/*System.out.println("Inseriu o aluno com tempo = "+dataEnvioAluno);
-				System.out.println();
-				System.out.println();*/
 				mensagensAluno.get(contMsgAluno);
 				todasMensagens[contador] = nomeAluno + ": " + mensagensAluno.get(contMsgAluno).getMensagemAluno();
 				contador++;
 				contMsgAluno++;
 			}
 			if (posicaoEnvioMonitor < posicaoEnvioAluno) { // monitor é o mais antigo
-				/*System.out.println("Inseriu o monitor com tempo = "+dataEnvioMonitor);
-				System.out.println();
-				System.out.println();*/
 				todasMensagens[contador] = nomeMonitor + ": " + mensagensMonitor.get(contMsgMonitor).getMensagemMonitor();
 				contador++;
 				contMsgMonitor++;

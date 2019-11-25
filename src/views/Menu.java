@@ -278,7 +278,7 @@ public class Menu extends JFrame {
 		panel_4.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				GerenciamentoListas gl = new GerenciamentoListas();
+				GerenciamentoListas gl = new GerenciamentoListas(aluno, monitor);
 				gl.setVisible(true);
 			}
 		});
