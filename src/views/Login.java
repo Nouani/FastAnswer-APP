@@ -26,6 +26,12 @@ import javax.swing.BoxLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Date: Nov 25-2019
+ * Aplicativo desenvolvido para os Monitores do PADEMT (Cotuca)
+ * @author Nouani Gabriel Sanches & Pedro Go Ikeda
+ * @version 1.0
+ */
 public class Login {
 
 	private JFrame  frame     = new JFrame  ("Fast Answer");
@@ -34,9 +40,6 @@ public class Login {
 	private JTextField txtRA;
 	private JTextField txtSenha;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

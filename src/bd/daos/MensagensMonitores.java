@@ -87,7 +87,7 @@ public class MensagensMonitores
 	 * @return o dicionário contendo todas as mensagens de acordo com o código do minitor e RA ordenadas
 	 * @throws Exception se ocorrer algum problema no DB
 	 */
-    public static MeuResultSet getMensagensPeloCodMonitor (int codMonitor, String ra) throws Exception
+    public static MeuResultSet getMensagensPeloCodMonitor (int codMonitor, String RA) throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -104,7 +104,7 @@ public class MensagensMonitores
             BDSQLServer.COMANDO.prepareStatement (sql);
             
             BDSQLServer.COMANDO.setInt (1, codMonitor);
-            BDSQLServer.COMANDO.setString (2, ra);
+            BDSQLServer.COMANDO.setString (2, RA);
 
             resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
         }

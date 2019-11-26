@@ -246,9 +246,9 @@ public class MensagemAluno implements Cloneable
     /**
 	Construtor de cópia da classe.
 	Seta os atributos da instância com os do passado como parâmetro
-	@param instância a ser copiada
+	@param modelo instância a ser copiada
 	*/
-    public MensagemAluno (MensagemAluno modelo) throws Exception
+    public MensagemAluno (MensagemAluno modelo)
     {
         this.codMensagemAluno = modelo.codMensagemAluno; 
         this.RA = modelo.RA; 

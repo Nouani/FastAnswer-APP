@@ -26,7 +26,7 @@ public class Materia implements Cloneable
     
     /**
 	Seta o código do monitor.
-	@param codMateria codigo desejado para inclusão
+	@param codMonitor codigo desejado para inclusão
 	@throws Exception caso codigo seja menor que zero
 	*/
     public void setCodMonitor(int codMonitor) throws Exception
@@ -155,9 +155,9 @@ public class Materia implements Cloneable
     /**
 	Construtor de cópia da classe.
 	Seta os atributos da instância com os do passado como parâmetro
-	@param instância a ser copiada
+	@param modelo instância a ser copiada
 	*/
-    public Materia (Materia modelo) throws Exception
+    public Materia (Materia modelo)
     {
         this.codMonitor = modelo.codMonitor; // nao clono, pq nao eh objeto
         this.codMateria = modelo.codMateria; // nao clono, pq nao eh objeto

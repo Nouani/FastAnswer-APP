@@ -156,9 +156,9 @@ public class Monitor implements Cloneable
     /**
    	Construtor de cópia da classe.
    	Seta os atributos da instância com os do passado como parâmetro
-   	@param instância a ser copiada
+   	@param modelo instância a ser copiada
    	*/
-    public Monitor (Monitor modelo) throws Exception
+    public Monitor (Monitor modelo)
     {
         this.codMonitor   = modelo.codMonitor;   // nao clono, pq nao eh clonavel
         this.RA   = modelo.RA;   // nao clono, pq nao eh clonavel

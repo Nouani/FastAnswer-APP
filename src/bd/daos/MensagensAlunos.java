@@ -18,7 +18,7 @@ public class MensagensAlunos
 	 * @return se a mensagem está cadastrada ou não
 	 * @throws Exception se ocorrer algum erro na procura
 	 */
-    public static boolean cadastrado (String ra) throws Exception
+    public static boolean cadastrado (String RA) throws Exception
     {
         boolean retorno = false;
 
@@ -32,7 +32,7 @@ public class MensagensAlunos
 
             BDSQLServer.COMANDO.prepareStatement (sql);
 
-            BDSQLServer.COMANDO.setString(1, ra);
+            BDSQLServer.COMANDO.setString(1, RA);
 
             MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
 
@@ -146,7 +146,7 @@ public class MensagensAlunos
 	 * @return o dicionário contendo todas as mensagens de acordo com o RA e código do monitor ordenadas
 	 * @throws Exception se ocorrer algum problema no DB
 	 */
-    public static MeuResultSet getMensagensPeloRA (String ra, int codMonitor) throws Exception
+    public static MeuResultSet getMensagensPeloRA (String RA, int codMonitor) throws Exception
     {
         MeuResultSet resultado = null;
 
@@ -162,7 +162,7 @@ public class MensagensAlunos
 
             BDSQLServer.COMANDO.prepareStatement (sql);
             
-            BDSQLServer.COMANDO.setString (1, ra);
+            BDSQLServer.COMANDO.setString (1, RA);
             BDSQLServer.COMANDO.setInt (2, codMonitor);
 
             resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();

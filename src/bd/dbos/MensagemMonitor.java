@@ -249,9 +249,9 @@ public class MensagemMonitor implements Cloneable
     /**
 	Construtor de cópia da classe.
 	Seta os atributos da instância com os do passado como parâmetro
-	@param instância a ser copiada
+	@param modelo instância a ser copiada
 	*/
-    public MensagemMonitor (MensagemMonitor modelo) throws Exception
+    public MensagemMonitor (MensagemMonitor modelo)
     {
         this.codMensagemMonitor = modelo.codMensagemMonitor; 
         this.codMonitor = modelo.codMonitor; 

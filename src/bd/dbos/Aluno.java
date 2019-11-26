@@ -185,9 +185,9 @@ public class Aluno implements Cloneable
     /**
 	Construtor de cópia da classe.
 	Seta os atributos da instância com os do passado como parâmetro
-	@param instância a ser copiada
+	@param modelo instância a ser copiada
 	*/
-    public Aluno (Aluno modelo) throws Exception
+    public Aluno (Aluno modelo) 
     {
         this.RA = modelo.RA; 
         this.nome   = modelo.nome;   

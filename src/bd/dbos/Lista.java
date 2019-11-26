@@ -190,9 +190,9 @@ public class Lista implements Cloneable
     /**
 	Construtor de cópia da classe.
 	Seta os atributos da instância com os do passado como parâmetro
-	@param instância a ser copiada
+	@param modelo instância a ser copiada
 	*/
-    public Lista (Lista modelo) throws Exception
+    public Lista (Lista modelo)
     {
         this.codLista = modelo.codLista;
         this.codMateria = modelo.codMateria;   

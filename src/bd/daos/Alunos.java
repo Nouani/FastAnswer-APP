@@ -10,7 +10,7 @@ import bd.dbos.*;
 /**
 A classe Alunos representa todos os alunos de uma Tabela no DB.
 Tem como métodos select's.
-@author Nouani Gabriel Sanches & Pedro Go Ikeda
+@author Nouani Gabriel Sanches Pedro Go Ikeda
 */
 public class Alunos
 {
