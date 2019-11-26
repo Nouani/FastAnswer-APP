@@ -5,8 +5,19 @@ import bd.*;
 import bd.core.*;
 import bd.dbos.*;
 
+/**
+A classe Monitores representa todas os monitores de uma Tabela no DB.
+Tem como métodos select's e update.
+@author Nouani Gabriel Sanches & Pedro Go Ikeda
+*/
 public class Monitores
 {
+	/**
+	 Método que confere se o monitor está cadastrado
+	 * @param RA é o RA do monitor a ser procurado
+	 * @return se está cadastrado ou não
+	 * @throws Exception se ocorrer algum erro na procura
+	 */
     public static boolean cadastrado (String RA) throws Exception
     {
         boolean retorno = false;
@@ -54,63 +65,12 @@ public class Monitores
 
         return retorno;
     }
-
-    public static void incluir (Monitor monitor) throws Exception
-    {
-        if (monitor==null)
-            throw new Exception ("Monitor nao fornecido");
-
-        try
-        {
-            String sql;
-
-            sql = "INSERT INTO MONITORES " +
-                  "(CODMONITOR,RA,ATIVIDADE) " +
-                  "VALUES " +
-                  "(?,?)";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-            
-            BDSQLServer.COMANDO.setInt (1, monitor.getCodigo ());
-            BDSQLServer.COMANDO.setString (2, monitor.getRA ());
-            BDSQLServer.COMANDO.setString (3, monitor.getAtividade());
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao cadastrar monitor");
-        }
-    }
-
-    public static void excluir (String RA) throws Exception
-    {
-        if (!cadastrado (RA))
-            throw new Exception ("Nao cadastrado");
-
-        try
-        {
-            String sql;
-
-            sql = "DELETE FROM MONITORES " +
-                  "WHERE RA=?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setString (1, RA);
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao excluir monitor");
-        }
-    }
-
+    
+    /**
+	 Método que altera as informações de um monitor já inserido
+	 * @param monitor objeto da classe Monitor que será alterado
+	 * @throws Exception se o objeto for inválido ou se ocorrer erros na conexão
+	 */
     public static void alterar (Monitor monitor) throws Exception
     {
         if (monitor==null)
@@ -142,6 +102,12 @@ public class Monitores
         }
     }
 
+    /**
+	 Método que retorna um monitor.
+	 * @param RA é o RA do monitor a ser retornado
+	 * @return o objeto do monitor do respectivo RA
+	 * @throws Exception se o monitor não estiver cadastrado, ou problemas no DB
+	 */
     public static Monitor getMonitor (String RA) throws Exception
     {
         Monitor monitor = null;
@@ -176,7 +142,12 @@ public class Monitores
 
         return monitor;
     }
-
+    
+    /**
+	 Método que retorna todos os monitores.
+	 * @return o dicionário contento todos os monitores
+	 * @throws Exception se houver problemas no DB
+	 */
     public static MeuResultSet getMonitores() throws Exception
     {
         MeuResultSet resultado = null;

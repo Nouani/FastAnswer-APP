@@ -7,8 +7,19 @@ import bd.*;
 import bd.core.*;
 import bd.dbos.*;
 
+/**
+A classe Alunos representa todos os alunos de uma Tabela no DB.
+Tem como métodos select's.
+@author Nouani Gabriel Sanches & Pedro Go Ikeda
+*/
 public class Alunos
 {
+	/**
+	 Método que confere se o aluno está cadastrado
+	 * @param RA é o RA do aluno que será procurado
+	 * @return se o aluno está cadastrado
+	 * @throws Exception se ocorrer algum erro na procura
+	 */
     public static boolean cadastrado (String RA) throws Exception
     {
         boolean retorno = false;
@@ -56,99 +67,13 @@ public class Alunos
 
         return retorno;
     }
-
-    public static void incluir (Aluno aluno) throws Exception
-    {
-        if (aluno==null)
-            throw new Exception ("Aluno nao fornecido");
-
-        try
-        {
-            String sql;
-
-            sql = "INSERT INTO ALUNOS " +
-                  "(RA,NOME,SENHA,ATIVIDADE) " +
-                  "VALUES " +
-                  "(?,?,?,?)";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setString(1, aluno.getRA());
-            BDSQLServer.COMANDO.setString(2, aluno.getNome ());
-            BDSQLServer.COMANDO.setString(3, aluno.getSenha());
-            BDSQLServer.COMANDO.setString(4, aluno.getAtividade());
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao cadastrar o aluno");
-        }
-    }
-
-    public static void excluir (String RA) throws Exception
-    {
-        if (!cadastrado (RA))
-            throw new Exception ("Nao cadastrado");
-
-        try
-        {
-            String sql;
-
-            sql = "DELETE FROM ALUNOS " +
-                  "WHERE RA=?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setString (1, RA);
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao excluir aluno");
-        }
-    }
-
-    public static void alterar (Aluno aluno) throws Exception
-    {
-        if (aluno==null)
-            throw new Exception ("Aluno nao fornecido");
-
-        if (!cadastrado (aluno.getRA()))
-            throw new Exception ("Nao cadastrado");
-
-        try
-        {
-            String sql;
-
-            sql = "UPDATE ALUNOS " +
-                  "SET NOME=? " +
-                  "SET SENHA=? " +
-                  "SET ATIVIDADE = "+
-                  "WHERE RA = ?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-            
-            BDSQLServer.COMANDO.setString(1, aluno.getNome ());
-            BDSQLServer.COMANDO.setString(2, aluno.getSenha ());
-            BDSQLServer.COMANDO.setString(3, aluno.getAtividade ());
-            BDSQLServer.COMANDO.setString(4, aluno.getRA ());
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao atualizar dados do aluno");
-        }
-    }
-
+    
+    /**
+	 Método que retorna um aluno.
+	 * @param RA é o RA do aluno a ser retornado
+	 * @return o objeto do aluno do respectivo RA
+	 * @throws Exception se o aluno não estiver cadastrado, ou problemas no DB
+	 */
     public static Aluno getAluno (String RA) throws Exception
     {
         Aluno aluno = null;
@@ -182,7 +107,12 @@ public class Alunos
 
         return aluno;
     }
-
+    
+    /**
+	 Método que retorna todos os alunos.
+	 * @return o dicionário contento todos os alunos
+	 * @throws Exception se houver problemas no DB
+	 */
     public static MeuResultSet getAlunos () throws Exception
     {
         MeuResultSet resultado = null;
@@ -206,6 +136,12 @@ public class Alunos
         return resultado;
     }
     
+    /**
+	 Método que retorna todos os alunos com uma determinada atividade.
+	 * @param atividade é a atividade (online ou offline) dos alunos
+	 * @return o dicionário contendo todos alunos com uma mesma atividade
+	 * @throws Exception se houver problemas no DB
+	 */
     public static MeuResultSet getAlunosAtividade (String atividade) throws Exception
     {
         MeuResultSet resultado = null;

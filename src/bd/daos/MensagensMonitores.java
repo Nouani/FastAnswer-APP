@@ -5,56 +5,18 @@ import bd.*;
 import bd.core.*;
 import bd.dbos.*;
 
+/**
+A classe MensagensMonitores representa todas as mensagens enviadas pelos monitores de uma Tabela no DB.
+Tem como métodos insert, select's.
+@author Nouani Gabriel Sanches & Pedro Go Ikeda
+*/
 public class MensagensMonitores
 {
-    public static boolean cadastrado (int codMonitor) throws Exception
-    {
-        boolean retorno = false;
-
-        try
-        {
-            String sql;
-
-            sql = "SELECT * " +
-                  "FROM MENSAGENSMONITORES " +
-                  "WHERE CodMonitor = ?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setInt(1, codMonitor);
-
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
-
-            retorno = resultado.first(); // pode-se usar resultado.last() ou resultado.next() ou resultado.previous() ou resultado.absotule(numeroDaLinha)
-
-            /* // ou, se preferirmos,
-
-            String sql;
-
-            sql = "SELECT COUNT(*) AS QUANTOS " +
-                  "FROM LIVROS " +
-                  "WHERE CODIGO = ?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setInt (1, codigo);
-
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
-
-            resultado.first();
-
-            retorno = resultado.getInt("QUANTOS") != 0;
-
-            */
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao procurar a mensagem enviada do monitor");
-        }
-
-        return retorno;
-    }
-
+	/**
+	 Método que inclui uma nova mensagem de um monitor
+	 * @param mensagemMonitor objeto da classe MensagemMonitor que será incluido
+	 * @throws Exception se o objeto dado for inválidos
+	 */
     public static void incluir (MensagemMonitor mensagemMonitor) throws Exception
     {
         if (mensagemMonitor==null)
@@ -87,106 +49,12 @@ public class MensagensMonitores
             throw new Exception ("Erro ao cadastrar a mensagem do monitor");
         }
     }
-
-    public static void excluir (int codMonitor) throws Exception
-    {
-        if (!cadastrado (codMonitor))
-            throw new Exception ("Nao cadastrado");
-
-        try
-        {
-            String sql;
-
-            sql = "DELETE FROM MensagensMonitores " +
-                  "WHERE CodMonitor=?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setInt (1, codMonitor);
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao excluir mensagem do monitor");
-        }
-    }
-
-    public static void alterar (MensagemMonitor mensagemMonitor) throws Exception
-    {
-        if (mensagemMonitor==null)
-            throw new Exception ("Mensagem do monitore não fornecida");
-
-        if (!cadastrado (mensagemMonitor.getCodMonitorEnviou()))
-            throw new Exception ("Nao cadastrado");
-
-        try
-        {
-            String sql;
-
-            sql = "UPDATE MensagensMonitores " +
-            	  "SET CodMonitor=? " +
-                  "SET MensagemMonitor=? " +
-                  "SET RA=? " +
-                  "SET OrdemMensagem=? " +
-                  "SET Recebimento=? " +
-                  "WHERE CodMensagemMonitor = ?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-            
-            BDSQLServer.COMANDO.setInt (1, mensagemMonitor.getCodMonitorEnviou());
-            BDSQLServer.COMANDO.setString(2, mensagemMonitor.getMensagemMonitor());
-            BDSQLServer.COMANDO.setString(3, mensagemMonitor.getRA());
-            BDSQLServer.COMANDO.setInt(4, mensagemMonitor.getOrdemMensagem());
-            BDSQLServer.COMANDO.setString(5, mensagemMonitor.getRecebimentoMonitor());
-            BDSQLServer.COMANDO.setInt(6, mensagemMonitor.getCodMensagemMonitor());
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao atualizar mensagem do monitor");
-        }
-    }
-
-    /*public static MensagemMonitor getMensagemMonitor (int codMensagemMonitor) throws Exception
-    {
-    	MensagemMonitor mensagemMonitor = null;
-
-        try
-        {
-            String sql;
-
-            sql = "SELECT * " +
-                  "FROM MensagensMonitores " +
-                  "WHERE CodMensagemMonitor = ?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setInt (1, codMensagemMonitor);
-
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
-
-            if (!resultado.first())
-                throw new Exception ("Nao cadastrado");
-
-            mensagemMonitor = new MensagemMonitor (resultado.getInt("CodMensagemMonitor"),
-                               				resultado.getString("MensagemMonitor"),
-                               				resultado.getString("RA"),
-                               				resultado.getString("Recebimento"));
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao procurar mensagem do monitor");
-        }
-
-        return mensagemMonitor;
-    }*/
-
+    
+    /**
+	 Método que retorna todas as mensagens ordenados pelo campo OrdemMensagem.
+	 * @return o dicionário contendo todas as mensagens ordenadas
+	 * @throws Exception se ocorrer algum problema no DB
+	 */
     public static MeuResultSet getMensagensMonitoresOrdenadas () throws Exception
     {
         MeuResultSet resultado = null;
@@ -211,6 +79,14 @@ public class MensagensMonitores
         return resultado;
     }
     
+    /**
+	 Método que retorna todas as mensagens por um determinado código de monitor e RA
+	 ordenados pelo campo OrdemMensagem.
+	 * @param codMonitor é o código do monitor com mensagens enviadas a serem procuradas
+	 * @param RA é o RA do aluno com mensagens recebidas a serem procuradas
+	 * @return o dicionário contendo todas as mensagens de acordo com o código do minitor e RA ordenadas
+	 * @throws Exception se ocorrer algum problema no DB
+	 */
     public static MeuResultSet getMensagensPeloCodMonitor (int codMonitor, String ra) throws Exception
     {
         MeuResultSet resultado = null;

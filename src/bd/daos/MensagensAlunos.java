@@ -5,8 +5,19 @@ import bd.*;
 import bd.core.*;
 import bd.dbos.*;
 
+/**
+A classe MensagensAlunos representa todas as mensagens enviadas pelos alunos de uma Tabela no DB.
+Tem como métodos select's e update.
+@author Nouani Gabriel Sanches & Pedro Go Ikeda
+*/
 public class MensagensAlunos
 {
+	/**
+	 Método que confere se a mensagem está cadastrada
+	 * @param RA é o RA do aluno com mensagem a ser procurada
+	 * @return se a mensagem está cadastrada ou não
+	 * @throws Exception se ocorrer algum erro na procura
+	 */
     public static boolean cadastrado (String ra) throws Exception
     {
         boolean retorno = false;
@@ -54,66 +65,12 @@ public class MensagensAlunos
 
         return retorno;
     }
-
-    public static void incluir (MensagemAluno mensagemAluno) throws Exception
-    {
-        if (mensagemAluno==null)
-            throw new Exception ("Mensagem a ser enviada nao fornecida");
-
-        try
-        {
-            String sql;
-
-            sql = "INSERT INTO MensagensAlunos " +
-                  "(CodMensagemAluno,RA,MensagemAluno,CodMonitor,DataEnvio,OrdemMensagem) " +
-                  "VALUES " +
-                  "(?,?,?,?,?,?)";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setInt(1, mensagemAluno.getCodMensagemAluno());
-            BDSQLServer.COMANDO.setString(2, mensagemAluno.getRAEnvio());
-            BDSQLServer.COMANDO.setString(3, mensagemAluno.getMensagemAluno());
-            BDSQLServer.COMANDO.setInt(4, mensagemAluno.getCodMonitor());
-            BDSQLServer.COMANDO.setInt(5, mensagemAluno.getOrdemMensagem());
-            BDSQLServer.COMANDO.setString(6, mensagemAluno.getRecebimentoAluno());
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao cadastrar a mensagem do aluno");
-        }
-    }
-
-    public static void excluir (String ra) throws Exception
-    {
-        if (!cadastrado (ra))
-            throw new Exception ("Nao cadastrado");
-
-        try
-        {
-            String sql;
-
-            sql = "DELETE FROM MensagensAlunos " +
-                  "WHERE RA=?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setString (1, ra);
-
-            BDSQLServer.COMANDO.executeUpdate ();
-            BDSQLServer.COMANDO.commit        ();
-        }
-        catch (SQLException erro)
-        {
-          //BDSQLServer.COMANDO.rollback ();
-            throw new Exception ("Erro ao excluir mensagem do aluno");
-        }
-    }
-
+    
+    /**
+	 Método que altera as informações de uma mensagem enviada por um aluno
+	 * @param mensagemAluno objeto da classe MensagemAluno que será alterado
+	 * @throws Exception se o objeto for inválido ou se ocorrer erros na conexão
+	 */
     public static void alterar (MensagemAluno mensagemAluno) throws Exception
     {
         if (mensagemAluno==null)
@@ -151,41 +108,12 @@ public class MensagensAlunos
             throw new Exception ("Erro ao atualizar mensagem do aluno");
         }
     }
-
-    /*public static MensagemAluno getMensagemAluno (int codMensagemAluno) throws Exception
-    {
-    	MensagemAluno mensagemAluno = null;
-
-        try
-        {
-            String sql;
-
-            sql = "SELECT * " +
-                  "FROM MensagensAlunos " +
-                  "WHERE CodMensagemAluno = ?";
-
-            BDSQLServer.COMANDO.prepareStatement (sql);
-
-            BDSQLServer.COMANDO.setInt (1, codMensagemAluno);
-
-            MeuResultSet resultado = (MeuResultSet)BDSQLServer.COMANDO.executeQuery ();
-
-            if (!resultado.first())
-                throw new Exception ("Nao cadastrado");
-
-            mensagemAluno = new MensagemAluno (resultado.getInt("CodMensagemAluno"),
-                               				resultado.getString("MensagemAluno"),
-                               				resultado.getInt("CodMonitor"),
-                               				resultado.getString("Recebimento"));
-        }
-        catch (SQLException erro)
-        {
-            throw new Exception ("Erro ao procurar mensagem do aluno");
-        }
-
-        return mensagemAluno;
-    }*/
-
+    
+    /**
+	 Método que retorna todas as mensagens ordenados pelo campo OrdemMensagem.
+	 * @return o dicionário contendo todas as mensagens ordenadas
+	 * @throws Exception se ocorrer algum problema no DB
+	 */
     public static MeuResultSet getMensagensAlunosOrdenadas () throws Exception
     {
         MeuResultSet resultado = null;
@@ -210,6 +138,14 @@ public class MensagensAlunos
         return resultado;
     }
     
+    /**
+	 Método que retorna todas as mensagens por um determinado RA e código de monitor
+	 ordenados pelo campo OrdemMensagem.
+	 * @param RA é o RA do aluno com mensagens enviadas a serem procuradas
+	 * @param codMonitor é o código do monitor com mensagens recebidas a serem procuradas
+	 * @return o dicionário contendo todas as mensagens de acordo com o RA e código do monitor ordenadas
+	 * @throws Exception se ocorrer algum problema no DB
+	 */
     public static MeuResultSet getMensagensPeloRA (String ra, int codMonitor) throws Exception
     {
         MeuResultSet resultado = null;
