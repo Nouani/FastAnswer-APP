@@ -276,13 +276,10 @@ public class ChatUsers extends JFrame {
 				if ((txtEnviar.getText().trim()).equals(""))
 					JOptionPane.showMessageDialog(null, "Digite o que deseja mandar para o " + alunoSelecionado.getNome());
 				else {
-					txtEnviar.setText("");
 					enviarMensagem(alunoSelecionado, txtEnviar.getText());
 					carregarMensagens(alunoSelecionado);
+					txtEnviar.setText("");
 				}
-					
-				// inserir no DB
-				// carregar na tela
 			}
 		});
 	}
@@ -290,7 +287,6 @@ public class ChatUsers extends JFrame {
 	public void enviarMensagem(Aluno alunoSelecionado, String mensagem) {
 		try {
 			int ultimaPosicao = this.todasMensagens.length;
-			System.out.println(ultimaPosicao);
 			MensagemMonitor msgMonitor = new MensagemMonitor(0, this.monitor.getCodigo(), mensagem, alunoSelecionado.getRA(), ultimaPosicao+1, "N");
 			MensagensMonitores.incluir(msgMonitor);
 		} catch (Exception e) 

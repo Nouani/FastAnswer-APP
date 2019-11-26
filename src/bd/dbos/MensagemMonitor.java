@@ -49,7 +49,7 @@ public class MensagemMonitor implements Cloneable
     {
         if (mensagemMonitor==null || mensagemMonitor.trim().equals(""))
             throw new Exception ("Mensagem não fornecida");
-
+        
         this.mensagemMonitor = mensagemMonitor;
     }
     
